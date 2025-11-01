@@ -48,8 +48,8 @@ if token:
                 })
 
         grades_df = pd.DataFrame(all_grades)
-        os.makedirs("data", exist_ok=True)
-        grades_df.to_csv("data/dados_atualizados_feira.csv", index=False, encoding="utf-8-sig")
+        os.makedirs("primeiro/data", exist_ok=True)
+        grades_df.to_csv("primeiro/data/dados_atualizados_feira.csv", index=False, encoding="utf-8-sig")
         print("Arquivo atualizado com sucesso!")
     else:
         print(f"Erro ao buscar reviews: {reviews_response.text}")
