@@ -33,6 +33,6 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add data/dados_atualizados_feira.csv
+          git add data/primeiro/dados_atualizados_feira.csv
           git commit -m "Atualiza dados automaticamente"
           git push
