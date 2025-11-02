@@ -1,8 +1,8 @@
 import requests
-import pandas as pd
 import os
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+import pandas as pd
+from sqlalchemy import create_engine, text
 
 load_dotenv()
 
@@ -44,7 +44,7 @@ if token:
     if reviews_response.status_code == 200:
         data = reviews_response.json()
 
-        # Preparar dados
+        #Trazendo os dados da API (requisição)
         all_grades = []
         for review in data:
             for grade in review["grades"]:
@@ -57,14 +57,29 @@ if token:
 
         grades_df = pd.DataFrame(all_grades)
 
-        os.makedirs("data", exist_ok=True)
-        grades_df.to_csv("data/dados_atualizados_feira.csv", index=False, encoding="utf-8-sig")
-        print("Arquivo CSV atualizado com sucesso!")
-
+        #Salvando os dados no banco
         engine = create_engine(f"postgresql+psycopg2://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}")
 
-        grades_df.to_sql("grades_feira", engine, if_exists="append", index=False)
-        print("Dados salvos no PostgreSQL com sucesso!")
+        with engine.begin() as conn:
+            for i, row in grades_df.iterrows():
+
+                #LÓGICA UPSERT - evita duplicação de dados -> lógisca semlhante ao CDC de atualização
+                update_script = text("""
+                    UPDATE grades_feira
+                    SET score = :score, weight = :weight
+                    WHERE review_id = :review_id AND grade_name = :grade_name
+                """)
+                
+                result = conn.execute(update_script, row.to_dict())
+
+                if result.rowcount == 0:
+                    insert_script = text("""
+                        INSERT INTO grades_feira (review_id, grade_name, score, weight)
+                        VALUES (:review_id, :grade_name, :score, :weight)
+                    """)
+                    conn.execute(insert_script, row.to_dict())
+
+        print("Dados salvos (UPSERT via UPDATE/INSERT) no PostgreSQL com sucesso!")
 
     else:
         print(f"Erro ao buscar reviews: {reviews_response.text}")
