@@ -98,7 +98,8 @@ Este projeto está licenciado sob a licença MIT — veja o arquivo [LICENSE](ht
 
 
 ## 💻 Autores
-
-  - [Júlia Penna](https://github.com/juliaPnMt1304)
+   - [Camilla Moreno](https://github.com/CamillaMorenoA)
+   - [Júlia Penna](https://github.com/juliaPnMt1304)
+   - [Carlos Perrud](https://github.com/CaduPerrudGerminare)
 
 
