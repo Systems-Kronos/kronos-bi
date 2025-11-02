@@ -2,7 +2,7 @@ name: Atualizar dados PowerBI
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/30 * * * *' # roda a cada 30 minutos
   workflow_dispatch:
 
 jobs:
@@ -11,6 +11,7 @@ jobs:
 
     permissions:
       contents: write 
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -30,6 +31,11 @@ jobs:
           SENHA_REQUISICAO: ${{ secrets.SENHA_REQUISICAO }}
           URL_LOGIN: ${{ secrets.URL_LOGIN }}
           URL_REVIEWS: ${{ secrets.URL_REVIEWS }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_CREDENTIAL: ${{ secrets.DB_CREDENTIAL }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
         run: python BI.py
 
       - name: Commit updated CSV
